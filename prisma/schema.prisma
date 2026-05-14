@@ -1,0 +1,52 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  firebaseUid   String         @unique // Penghubung aman dengan Firebase Auth
+  name          String
+  email         String         @unique
+  balance       Float          @default(0.0) // Sisa saldo aktual di dompet/rekening
+  transactions  Transaction[]
+  subscriptions Subscription[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model Category {
+  id           Int           @id @default(autoincrement())
+  name         String // Contoh: "Makanan", "Belanja", "Transportasi"
+  type         String // "INCOME" atau "EXPENSE"
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  userId      String
+  categoryId  Int
+  amount      Float
+  date        DateTime @default(now()) // Kunci utama untuk data time-series (DES)
+  description String?
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id])
+}
+
+model Subscription {
+  id       String  @id @default(uuid())
+  userId   String
+  name     String // Contoh: "Netflix", "Spotify"
+  amount   Float // Biaya langganan bulanan tetap
+  dueDate  Int // Tanggal jatuh tempo (1-31)
+  isActive Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
