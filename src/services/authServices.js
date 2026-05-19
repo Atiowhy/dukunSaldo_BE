@@ -22,16 +22,15 @@ export const mockLoginService = async (email, name) => {
         balance: 0.0,
       },
     });
-
-    const token = jwt.sign(
-      {
-        firebaseUid: user.firebaseUid,
-        email: user.email,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" },
-    );
   }
+  const token = jwt.sign(
+    {
+      firebaseUid: user.firebaseUid,
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" },
+  );
 
   return { user, token };
 };

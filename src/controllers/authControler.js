@@ -11,7 +11,7 @@ export const mockLogin = async (req, res) => {
       });
     }
 
-    const authData = mockLoginService(email, name);
+    const authData = await mockLoginService(email, name);
 
     res.status(201).json({
       success: true,
